@@ -1,1 +1,101 @@
-<p>task1-a works!</p>
+<nz-splitter>
+  @let selectedRole = userService.role();
+  @let selectedStaffMember = userService.staffMember();
+
+  <nz-splitter-panel nzDefaultSize="25%" [nzResizable]="false">
+    <div class="role-selector">
+      <div class="role-avatars">
+        @for(role of userRoles; track role) {
+          <nz-avatar
+            [nzSize]="48"
+            [class.active]="selectedRole === role"
+            (click)="selectRole(role)"
+            class="role-avatar"
+            [nzIcon]="roleIcons[role]"
+            nzBackgroundColor="#1890ff"
+          ></nz-avatar>
+        }
+      </div>
+      <div class="role-labels">
+        <span class="current-role">{{ roleLabels[selectedRole] }}</span>
+      </div>
+    </div>
+
+    @if (selectedRole === UserRole.Staff) {
+      <div class="staff-selector">
+        <label>Válassz személyzetet:</label>
+        <nz-select
+          [ngModel]="selectedStaffMember?.id || null"
+          (ngModelChange)="selectStaffMember($event)"
+          nzPlaceHolder="Válassz személyzetet"
+          class="staff-select"
+          [nzNotFoundContent]="notFoundTemplate"
+        >
+          @for(staff of staffList(); track staff.id) {
+            <nz-option [nzValue]="staff.id" [nzLabel]="staff.name"></nz-option>
+          }
+          <ng-template #notFoundTemplate>
+            <nz-empty nzNotFoundImage="simple" nzNotFoundContent="Nincs személyzet"></nz-empty>
+          </ng-template>
+        </nz-select>
+      </div>
+    }
+
+    <div class="function-buttons">
+      @for(func of functionTypes; track func) {
+        @if (func === FunctionType.StaffManager || func === FunctionType.QuestCreator || func === FunctionType.QuestSelector) {
+          <button
+            nz-button
+            *appAdminOnly
+            nzType="primary"
+            nzSize="large"
+            nzBlock
+            [class.active]="selectedFunction === func"
+            (click)="selectFunction(func)"
+            class="function-btn"
+          >
+            {{ functionLabels[func] }}
+          </button>
+        } @else if (func === FunctionType.QuestController) {
+          <button
+            nz-button
+            nzType="primary"
+            nzSize="large"
+            nzBlock
+            [class.active]="selectedFunction === func"
+            [disabled]="selectedRole !== UserRole.Admin && !selectedStaffMember"
+            (click)="selectFunction(func)"
+            class="function-btn"
+          >
+            {{ functionLabels[func] }}
+          </button>
+        }
+      }
+    </div>
+  </nz-splitter-panel>
+
+
+  <nz-splitter-panel>
+    <div class="content-area">
+      @switch (selectedFunction) {
+        @case (FunctionType.StaffManager) {
+          <app-staff-manager></app-staff-manager>
+        }
+        @case (FunctionType.QuestCreator) {
+          <app-quest-creator></app-quest-creator>
+        }
+        @case (FunctionType.QuestSelector) {
+          <app-quest-selector></app-quest-selector>
+        }
+        @case (FunctionType.QuestController) {
+          <app-quest-controller></app-quest-controller>
+        }
+        @default {
+          <div class="empty-state">
+            <p>Válassz egy funkciót a bal oldali panelről</p>
+          </div>
+        }
+      }
+    </div>
+  </nz-splitter-panel>
+</nz-splitter>

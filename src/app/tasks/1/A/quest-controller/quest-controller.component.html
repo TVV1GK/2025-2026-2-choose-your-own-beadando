@@ -1,0 +1,45 @@
+@let selectedRole = userService.role();
+@let selectedStaffMember = userService.staffMember();
+
+<div class="quest-controller">
+  <h2>Küldetésvezérlő</h2>
+  <div class="columns-container">
+    @for (status of statuses; track status) {
+      <div class="quest-column">
+        <h3>{{ statusLabels[status] }}</h3>
+        <div
+          [cdkDropListData]="questsByStatus[status]"
+          cdkDropList
+          [id]="'list-' + status"
+          [cdkDropListConnectedTo]="getConnectedLists(status)"
+          class="quest-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+        @let filteredQuests = questsByStatus[status].filter(quest => userService.isAdmin() ||
+          (selectedRole === UserRole.Staff && quest.assignedStaff.some(s => s === selectedStaffMember?.id)));
+
+        @for (quest of filteredQuests; track quest.id) {
+          <div 
+          class="quest-card" 
+          cdkDrag
+          [cdkDragDisabled]="!userService.isAdmin() || quest.assignedStaff.length < quest.requiredStaff"
+          [class.disabled]="!userService.isAdmin() ||quest.assignedStaff.length < quest.requiredStaff"
+          >
+          <h4>{{ quest.name }}</h4>
+          @if (quest.description) {
+              <p class="description">{{ quest.description }}</p>
+          }
+          <div class="quest-meta">
+              <span class="difficulty">{{ difficultyLabels[quest.difficulty] }}</span>
+              <span class="staff-count">{{ quest.assignedStaff.length }} / {{ quest.requiredStaff }}</span>
+          </div>
+          </div>
+        }
+        @if (filteredQuests.length === 0) {
+          <div class="empty-state">Nincs küldetés</div>
+        }
+      </div>
+      </div>
+    }
+  </div>
+</div>

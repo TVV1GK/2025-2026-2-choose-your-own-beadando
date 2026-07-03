@@ -1,0 +1,24 @@
+<nz-modal
+  [nzVisible]="isVisible()"
+  nzTitle="Kép vágása"
+  nzContent=""
+  nzOkText="Mentés"
+  nzCancelText="Mégse"
+  (nzOnOk)="confirmImage()"
+  (nzOnCancel)="cancelModal()"
+  nzWidth="500px"
+>
+  <ng-container *nzModalContent>
+    <div class="cropper-wrapper">
+      <image-cropper
+        [imageBase64]="imageBase64()"
+        output="base64"
+        (imageCropped)="onImageCropped($event)"
+        [cropperMinWidth]="32"
+        [cropperMinHeight]="32"
+        [cropperMaxWidth]="1024"
+        [cropperMaxHeight]="1024"
+      ></image-cropper>
+    </div>
+  </ng-container>
+</nz-modal>

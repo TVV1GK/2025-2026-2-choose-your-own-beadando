@@ -1,0 +1,85 @@
+<div class="quest-creator">
+  <h2>Új küldetés hozzáadása</h2>
+  <form nz-form [formGroup]="form" class="quest-form" (ngSubmit)="submitForm()">
+    <nz-form-item>
+      <nz-form-label nzFor="name" nzRequired>Név</nz-form-label>
+      <nz-form-control [nzErrorTip]="nameErrorTmpl">
+        <input
+          id="name"
+          nz-input
+          type="text"
+          formControlName="name"
+          placeholder="pl. A nagy kincs"
+        />
+        <ng-template #nameErrorTmpl let-control>
+          @if (control.errors?.['required']) {
+            A név kötelező!
+          }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzFor="description">Leírás</nz-form-label>
+      <nz-form-control>
+        <textarea
+          id="description"
+          nz-input
+          formControlName="description"
+          placeholder="A küldetés leírása..."
+          rows="3"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzFor="difficulty" nzRequired>Nehézség</nz-form-label>
+      <nz-form-control [nzErrorTip]="difficultyErrorTmpl">
+        <nz-select
+          id="difficulty"
+          formControlName="difficulty"
+          nzPlaceHolder="Válassz nehézségi szintet"
+        >
+          @for (difficulty of difficulties; track difficulty) {
+            <nz-option [nzValue]="difficulty" [nzLabel]="difficultyLabels[difficulty]"></nz-option>
+          }
+        </nz-select>
+        <ng-template #difficultyErrorTmpl let-control>
+          @if (control.errors?.['required']) {
+            A nehézség kötelező!
+          }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzFor="requiredStaff" nzRequired>Szükséges létszám</nz-form-label>
+      <nz-form-control [nzErrorTip]="staffErrorTmpl">
+        <nz-input-number
+          id="requiredStaff"
+          formControlName="requiredStaff"
+          [nzMin]="1"
+          [nzMax]="3"
+          [nzStep]="1"
+        ></nz-input-number>
+        <ng-template #staffErrorTmpl let-control>
+          @if (control.errors?.['required']) {
+            A szükséges létszám kötelező!
+          }
+        </ng-template>
+      </nz-form-control>
+      @if (form.errors?.['staffMinimumForHard']) {
+        <div class="nz-form-item-error">Nehéz küldetéshez legalább 2 személy szükséges!</div>
+      }
+    </nz-form-item>
+
+    <button
+      nz-button
+      nzType="primary"
+      [disabled]="form.invalid"
+      class="submit-btn"
+    >
+      Hozzáadás
+    </button>
+  </form>
+</div>

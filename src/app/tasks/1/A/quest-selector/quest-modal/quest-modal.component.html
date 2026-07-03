@@ -1,0 +1,44 @@
+@let questVal = quest();
+
+@if (questVal) {
+  <nz-modal
+  [nzVisible]="isVisible"
+  nzTitle="Személyzet hozzárendelése"
+  nzOkText="Mentés"
+  nzCancelText="Mégse"
+  [nzOkDisabled]="selectedCount !== questVal.requiredStaff"
+  (nzOnOk)="onSave()"
+  (nzOnCancel)="handleClose()"
+  >
+  <ng-container *nzModalContent>
+    <div class="quest-info">
+    <h3>{{ questVal.name }}</h3>
+    <p><strong>Leírás:</strong> {{ questVal.description || '(Nincs leírás)' }}</p>
+    <p><strong>Státusz:</strong> {{ statusLabels[questVal.status] }}</p>
+    <p><strong>Szükséges létszám:</strong> {{ questVal.requiredStaff }}</p>
+    <p><strong>Kiválasztott:</strong> {{ selectedCount }} / {{ questVal.requiredStaff }}</p>
+    </div>
+
+    <div class="staff-assignment">
+    <h4>Személyzet kiválasztása</h4>
+    @if (staffAssignments.length === 0) {
+        <p class="no-staff">Nincs elérhető személyzet</p>
+    } @else {
+        <div class="staff-list">
+        @for (assignment of staffAssignments; track assignment.staff.id) {
+            <label nz-checkbox
+            [ngModel]="assignment.selected"
+            [disabled]="!assignment.selected && selectedCount >= questVal.requiredStaff"
+            (ngModelChange)="onStaffToggle(assignment)"
+            class="staff-checkbox"
+            >
+            <img [src]="assignment.staff.image || 'assets/images/placeholder.png'" alt="{{ assignment.staff.name }}" class="staff-avatar" />
+            <span class="staff-name">{{ assignment.staff.name }}</span>
+            </label>
+        }
+        </div>
+    }
+    </div>
+  </ng-container>
+  </nz-modal>
+}

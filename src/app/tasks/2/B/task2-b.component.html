@@ -1,1 +1,48 @@
-<p>task2-b works!</p>
+<div class="file-uploader-container">
+  <div class="upload-section">
+    <nz-upload
+      [nzMultiple]="false"
+      [nzBeforeUpload]="beforeUpload">
+      <button nz-button>
+        <nz-icon nzType="upload" nzTheme="outline"></nz-icon>
+        Fájl kiválasztása
+      </button>
+    </nz-upload>
+  </div>
+
+  @if (file) {
+    <div class="content-section">
+      <div class="file-info">
+        <div class="info-item">
+          <span class="label">Fájl neve:</span>
+          <span class="value">{{ fileName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Fájl mérete:</span>
+          <span class="value">{{ fileSize | fileSize }}</span>
+        </div>
+        <button nz-button nzType="text" nzDanger (click)="clearFile()" class="clear-btn">
+          Törlés
+        </button>
+      </div>
+
+      <div class="search-box">
+        <input
+          type="text"
+          nz-input
+          placeholder="Keresés a szövegben..."
+          [(ngModel)]="searchExpression"
+          class="search-input" />
+      </div>
+
+      <div class="file-content-box"
+        appHighlightExp
+        [hLexpression]="searchExpression"
+        [hLconfig]="{ acrossElements: true }">
+        <pre>{{ fileContent }}</pre>
+      </div>
+    </div>
+  } @else {
+    <nz-empty nzNotFoundContent="Válassz ki egy .txt fájlt az indításhoz"></nz-empty>
+  }
+</div>

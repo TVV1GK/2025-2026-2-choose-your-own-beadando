@@ -1,0 +1,16 @@
+<div class="quest-selector">
+  <h2>Küldetések kiosztása</h2>
+  <nz-tree
+    [nzData]="treeData"
+    nzShowIcon
+    nzShowLine
+    (nzClick)="onNodeClick($event)"
+  ></nz-tree>
+</div>
+
+<app-quest-modal
+  [quest]="selectedQuest!"
+  [isVisible]="modalVisible"
+  (closeModal)="onModalClose()"
+  (saveAssignments)="onSaveAssignments($event)"
+></app-quest-modal>
